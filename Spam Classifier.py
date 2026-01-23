@@ -23,3 +23,10 @@ print("n1 =", h1)
 print("n2 =", h2)
 print("Raw output =", out)
 print("Spam probability =", spam)
+
+
+OUTPUT:
+n1 = 0.09999999999999998
+n2 = 0
+Raw output = 0.06999999999999998
+Spam probability = 0.5174928576663897
