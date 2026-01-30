@@ -1,0 +1,57 @@
+import tensorflow as tf
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Dense
+from tensorflow.keras.optimizers import Adam
+import numpy as np
+
+# -----------------------------
+# 1. Dummy Fraud Dataset
+# -----------------------------
+# Features: [amount, time, location_score, device_score]
+X = np.array([
+    [200, 1, 0.1, 0.2],   # normal
+    [5000, 23, 0.9, 0.8], # fraud
+    [150, 2, 0.2, 0.1],   # normal
+    [7000, 1, 0.95, 0.9], # fraud
+    [300, 3, 0.1, 0.2],   # normal
+    [9000, 22, 0.99, 0.85]# fraud
+])
+
+# Labels: 0 = Normal, 1 = Fraud
+y = np.array([0, 1, 0, 1, 0, 1])
+
+# -----------------------------
+# 2. Build Feed Forward Model
+# -----------------------------
+model = Sequential()
+
+# Input + Hidden Layer 1
+model.add(Dense(16, activation='relu', input_shape=(4,)))
+
+# Hidden Layer 2
+model.add(Dense(8, activation='relu'))
+
+# Output Layer
+model.add(Dense(1, activation='sigmoid'))
+
+# -----------------------------
+# 3. Compile Model
+# -----------------------------
+model.compile(
+    optimizer=Adam(learning_rate=0.01),
+    loss='binary_crossentropy',
+    metrics=['accuracy']
+)
+
+# -----------------------------
+# 4. Train Model (Backprop happens here)
+# -----------------------------
+model.fit(X, y, epochs=15, verbose=1)
+
+# -----------------------------
+# 5. Test Prediction
+# -----------------------------
+test_transaction = np.array([[6000, 0, 0.95, 0.9]])
+prediction = model.predict(test_transaction)
+
+print("Fraud Probability:", prediction[0][0])
