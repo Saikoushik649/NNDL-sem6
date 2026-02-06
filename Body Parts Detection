@@ -1,0 +1,61 @@
+# =====================================================
+# YOLOv8 Pose (Body Parts) Detection - Full Script
+# =====================================================
+
+# ---------- Install (safe for Colab/Jupyter) ----------
+try:
+    import ultralytics
+except:
+    import os
+    os.system("pip install ultralytics opencv-python")
+
+import cv2
+from ultralytics import YOLO
+
+# =====================================================
+# 1. IMAGE PATH (change to your image)
+# =====================================================
+image_path = "/content/Eye image.avif"   # change path if needed
+
+# =====================================================
+# 2. LOAD IMAGE
+# =====================================================
+image = cv2.imread(image_path)
+
+if image is None:
+    raise ValueError("❌ Image not found. Check path.")
+
+# =====================================================
+# 3. LOAD YOLOv8 POSE MODEL
+# =====================================================
+model = YOLO("yolov8n-pose.pt")
+
+# =====================================================
+# 4. RUN POSE DETECTION
+# =====================================================
+results = model(image, conf=0.3)
+
+# =====================================================
+# 5. DRAW POSE (keypoints + skeleton automatically)
+# =====================================================
+annotated = results[0].plot()
+
+# =====================================================
+# 6. DISPLAY IMAGE (works everywhere)
+# =====================================================
+try:
+    # For Colab
+    from google.colab.patches import cv2_imshow
+    cv2_imshow(annotated)
+except:
+    # For local system
+    cv2.imshow("Pose Detection", annotated)
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
+
+# =====================================================
+# 7. SAVE OUTPUT
+# =====================================================
+cv2.imwrite("pose_output.jpg", annotated)
+
+print("✅ Pose detection complete. Saved as pose_output.jpg")
