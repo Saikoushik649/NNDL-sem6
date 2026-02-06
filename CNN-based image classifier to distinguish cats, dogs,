@@ -1,0 +1,47 @@
+import numpy as np
+import matplotlib.pyplot as plt
+from PIL import Image
+import tensorflow as tf
+from tensorflow.keras.applications.mobilenet_v2 import (
+    MobileNetV2,
+    preprocess_input,
+    decode_predictions
+)
+
+IMG_SIZE = (224, 224)
+
+# =====================================================
+# Load PRETRAINED model (already trained)
+# =====================================================
+model = MobileNetV2(weights="imagenet")
+
+# =====================================================
+# Prediction function
+# =====================================================
+def predict_and_show(image_path):
+
+    img = Image.open(image_path).convert("RGB")
+    display_img = img.copy()
+
+    img = img.resize(IMG_SIZE)
+    img_array = np.array(img)
+
+    img_array = preprocess_input(img_array)
+    img_array = np.expand_dims(img_array, axis=0)
+
+    preds = model.predict(img_array, verbose=0)
+
+    decoded = decode_predictions(preds, top=1)[0][0]
+    label = decoded[1]
+    confidence = decoded[2]
+
+    plt.imshow(display_img)
+    plt.axis("off")
+    plt.title(f"{label} ({confidence:.2f})")
+    plt.show()
+
+
+# =====================================================
+# Use your image
+# =====================================================
+predict_and_show("/content/dog1.jpg")   # or your local path
